@@ -14,9 +14,11 @@
 $router->group(['prefix' => 'v1'], function () use ($router){
 
     //Authentication
-    $router->get('register', 'Auth\RegisterController@store');
+    $router->post('register', 'Auth\RegisterController@store');
 
 });
+
+$router->get('takeAll', 'Auth\RegisterController@takeAll');
 
 $router->get('/', function () use ($router) {
     return "Welcome to Tel-Schedule API";
