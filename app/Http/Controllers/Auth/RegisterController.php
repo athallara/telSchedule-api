@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
@@ -39,14 +39,15 @@ class RegisterController extends Controller
         $user->save();
 
         return response()->json([
+            //'token'   => Auth::login($user),
             'status'  => 'success',
             'message' => 'Berhasil Daftar!',
         ]);
     }
 
-    public function takeAll(){
-        $user = User::all();
+    public function takeAll(Request $request){
+        $token = app('auth')->attempt($request->only('username', 'password'));
 
-        dd($user);
+    return response()->json(compact('token'));
     }
 }

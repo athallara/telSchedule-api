@@ -20,7 +20,6 @@ class CreateUsersTable extends Migration
             $table->string('username', 30)->unique();
             $table->string('fullname', 100);
             $table->string('password', 100);
-            $table->string('email'   , 100)->unique();
             $table->string('university', 150);
             $table->string('major', 100);
             $table->string('classGroup', 50);
