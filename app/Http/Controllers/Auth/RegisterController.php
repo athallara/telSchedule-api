@@ -22,7 +22,6 @@ class RegisterController extends Controller
             'username'   => 'required',
             'fullname'   => 'required',
             'password'   => 'required|min:5',
-            'email'      => 'required',
             'university' => 'max:50',
             'major'      => 'max:50',
             'classGroup' => 'max:50'
@@ -32,22 +31,24 @@ class RegisterController extends Controller
         $user->username   = $request->username;
         $user->fullname   = $request->fullname;
         $user->password   = Hash::make($request->password);
-        $user->email      = $request->email;
         $user->university = $request->university;
         $user->major      = $request->major;
         $user->classGroup = $request->classGroup;
         $user->save();
 
-        return response()->json([
-            //'token'   => Auth::login($user),
-            'status'  => 'success',
-            'message' => 'Berhasil Daftar!',
-        ]);
+        $token = Auth::login($user);
+
+        return $this->respondWithToken($token);
     }
 
-    public function takeAll(Request $request){
-        $token = app('auth')->attempt($request->only('username', 'password'));
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'status'        => 'success',
+            'access_token'  => $token,
+            'token_type'    => 'bearer',
+            'expires_in'    => Auth::factory()->getTTL() * 60
+        ])->header('Authorization', sprintf('Bearer %s', $token));
 
-    return response()->json(compact('token'));
     }
 }

@@ -2,103 +2,88 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class AuthController extends Controller
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
+
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
+        $this->middleware('auth:api', ['except' => ['login','register','logout']]);
     }
 
+    
     public function register(Request $request)
     {
-        $user = User::create([
-            'username' => $request->username,
-            'fullname' => $request->fullname,
-            'password' => app('hash')->make($request->password, ['rounds' => 12]),
-            'university' => $request->university,
-            'major' => $request->major,
-            'classGroup' => $request->classGroup,
-         ]);
+        $this->validate($request, [
+            'username'   => 'required',
+            'fullname'   => 'required',
+            'password'   => 'required|min:5',
+            'university' => 'max:50',
+            'major'      => 'max:50',
+            'classGroup' => 'max:50'
+        ]);
+
+        $user = new User;
+        $user->username   = $request->username;
+        $user->fullname   = $request->fullname;
+        $user->password   = Hash::make($request->password);
+        $user->university = $request->university;
+        $user->major      = $request->major;
+        $user->classGroup = $request->classGroup;
+        $user->save();
 
         $token = Auth::login($user);
 
         return $this->respondWithToken($token);
     }
 
-    /**
-     * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function login(Request $request)
     {
+        $credentials = $request->only('username','password');
 
-      // return response()->json(['message' => 'Successfully logged in']);
-        $credentials = $request->only(['username', 'password']);
+        $user = User::where('username', $credentials['username'])->first();
 
-        if (! $token = Auth::attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if(!$user){
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Username not found!',
+            ], 401);
         }
+
+        $token = Auth::attempt($credentials);
+
+        if (!$token){ 
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Login Failed! Invalid Credentials!'], 401);
+        } else
 
         return $this->respondWithToken($token);
     }
 
-    /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function me()
-    {
-        return response()->json(Auth::user());
-    }
-
-    /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function logout()
     {
         Auth::logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
-    }
-
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function refresh()
-    {
-        return $this->respondWithToken(auth()->refresh());
-    }
-
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function respondWithToken($token)
-    {
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 60
+            'status'  => 'success',
+            'message' => 'Successfully Logged Out!',
         ]);
     }
 
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'status'        => 'success',
+            'access_token'  => $token,
+            'token_type'    => 'bearer',
+            'expires_in'    => Auth::factory()->getTTL() * 60
+        ])->header('Authorization', sprintf('Bearer %s', $token));
+
+    }
 }
