@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller{
 
     public function __construct(){
-        $this->middleware('auth:api', ['except' => ['login']]);
+       // $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     public function login(Request $request){
@@ -28,11 +28,11 @@ class LoginController extends Controller{
         }
 
         if (! $token = Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Gagal Login!']);
+            return response()->json(['message' => 'Login Failed!']);
         }
 
         return response()->json([
-            'message' => 'Berhasil Login',
+            'message' => 'Login Success!',
             'Token'   => $token,
         ]);
 

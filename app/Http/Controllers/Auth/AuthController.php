@@ -13,7 +13,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register','logout']]);
+        $this->middleware('auth:api', ['except' => ['login','register']]);
     }
 
     
@@ -82,7 +82,7 @@ class AuthController extends Controller
             'status'        => 'success',
             'access_token'  => $token,
             'token_type'    => 'bearer',
-            'expires_in'    => Auth::factory()->getTTL() * 60
+            'expires_in'    => Auth::factory()->getTTL() * 180
         ])->header('Authorization', sprintf('Bearer %s', $token));
 
     }

@@ -27,6 +27,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password', 'remember_token'
     ];
+
+    public function Courses()
+    {
+        return $this->hasMany('App\Models\Course');
+    }
+
+    /** Json Web Token **/
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
