@@ -1,27 +1,36 @@
 <?php
 
+/** 
+ * @category Auth Modules
+ */
+
 $router->group([
     'prefix' => 'auth',
 ], function () use ($router){
-
-    //Authentication
     $router->post('register', 'Auth\AuthController@register');
     $router->post('login', 'Auth\AuthController@login');
     $router->post('logout', 'Auth\AuthController@logout');
-    // $router->post('logout', 'Auth\AuthController@logout'); //Logout Should be Implement using Redis
 });
 
-$router->group([
-    'prefix' => 'user',
-], function () use ($router){
-    $router->get('getAllUser','User\UserController@getAllUser');
-});
+/**
+ * @category Course Modules
+ */
 
 $router->group([
     'prefix' => 'course',
 ], function () use ($router){
     $router->post('createUserCourse', 'Course\CourseController@createUserCourse');
     $router->get('getUserCourse', 'Course\CourseController@getUserCourse');
+});
+
+/**
+ * @category User Modules
+ */
+
+$router->group([
+    'prefix' => 'user',
+], function () use ($router){
+    $router->get('getAllUser','User\UserController@getAllUser');
 });
 
 $router->get('/', function () use ($router) {

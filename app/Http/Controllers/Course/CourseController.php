@@ -13,7 +13,7 @@ class CourseController extends Controller{
     
     public function __construct()
     {
-         $this->middleware('auth:api');
+        $this->middleware('ValidateToken');         
     }
 
     public function createUserCourse(Request $request)

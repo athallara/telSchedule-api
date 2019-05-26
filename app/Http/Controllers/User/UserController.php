@@ -7,15 +7,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
 class UserController extends Controller{
+    
 
     public function __construct(){
-        $this->middleware('auth:api');
+        $this->middleware('ValidateToken');
     }
 
     public function getAllUser()
     {
-        $x = Auth::user()->id;
-        dd($x);
+        Auth::user()->id;
         return User::all();
     }
 }
