@@ -57,4 +57,21 @@ class CourseController extends Controller{
             ],424);
         endif;
     }
+
+    public function deleteUserCourse(Request $request, $id){
+        $course = Course::where('id', $id)->where('user_id', Auth::user()->id)->delete();
+
+        if($course):
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Successfully Delete Course',
+            ],200);
+        else:
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Failed Delete Course',
+            ], 424);
+        endif;
+
+    }
 }

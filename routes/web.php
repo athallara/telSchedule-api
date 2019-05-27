@@ -22,6 +22,7 @@ $router->group([
     $router->get('getUserCourse', 'Course\CourseController@getUserCourse');
     $router->post('createUserCourse', 'Course\CourseController@createUserCourse');
     $router->put('updateUserCourse/{id}', 'Course\CourseController@updateUserCourse');
+    $router->delete('deleteUserCourse/{id}', 'Course\CourseController@deleteUserCourse');
 });
 
 /**
