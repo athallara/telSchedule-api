@@ -8,17 +8,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
-class AuthController extends Controller
-{
+class AuthController extends Controller{
 
-    public function __construct()
-    {
+    public function __construct(){
         $this->middleware('ValidateToken', ['except' => ['login','register']]);
     }
-
     
-    public function register(Request $request)
-    {
+    public function register(Request $request){
         $this->validate($request, [
             'username'   => 'required',
             'fullname'   => 'required',
@@ -42,17 +38,15 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
-    public function login(Request $request)
-    {
+    public function login(Request $request){
         $credentials = $request->only('username','password');
-
         $user = User::where('username', $credentials['username'])->first();
 
         if(!$user){
             return response()->json([
                 'status'  => 'error',
                 'message' => 'Username not found!',
-            ], 401);
+            ],401);
         }
 
         $token = Auth::attempt($credentials);
@@ -60,30 +54,29 @@ class AuthController extends Controller
         if (!$token){ 
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Login Failed! Invalid Credentials!'], 401);
-        } else
+                'message' => 'Login Failed! Invalid Credentials!',
+            ],401);
+        }
 
         return $this->respondWithToken($token);
     }
 
-    public function logout()
-    {
+    public function logout(){
         Auth::logout();
 
         return response()->json([
             'status'  => 'success',
             'message' => 'Successfully Logged Out!',
-        ]);
+        ],200);
     }
 
-    protected function respondWithToken($token)
-    {
+    protected function respondWithToken($token){
         return response()->json([
             'status'        => 'success',
             'access_token'  => $token,
             'token_type'    => 'bearer',
-            'expires_in'    => Auth::factory()->getTTL() * 180
-        ])->header('Authorization', sprintf('Bearer %s', $token));
+            // 'expires_in'    => Auth::factory()->getTTL() * 180
+        ],200)->header('Authorization', sprintf('Bearer %s', $token));
 
     }
 }

@@ -8,14 +8,12 @@ use App\Http\Controllers\Controller;
 
 class UserController extends Controller{
     
-
     public function __construct(){
         $this->middleware('ValidateToken');
     }
 
-    public function getAllUser()
-    {
-        Auth::user()->id;
-        return User::all();
+    public function getUserData(){
+        $user = User::findorfail(Auth::user()->id);
+        return $user;
     }
 }

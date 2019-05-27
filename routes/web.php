@@ -1,6 +1,6 @@
 <?php
 
-/** 
+/**
  * @category Auth Modules
  */
 
@@ -19,8 +19,9 @@ $router->group([
 $router->group([
     'prefix' => 'course',
 ], function () use ($router){
-    $router->post('createUserCourse', 'Course\CourseController@createUserCourse');
     $router->get('getUserCourse', 'Course\CourseController@getUserCourse');
+    $router->post('createUserCourse', 'Course\CourseController@createUserCourse');
+    $router->put('updateUserCourse/{id}', 'Course\CourseController@updateUserCourse');
 });
 
 /**
@@ -30,7 +31,7 @@ $router->group([
 $router->group([
     'prefix' => 'user',
 ], function () use ($router){
-    $router->get('getAllUser','User\UserController@getAllUser');
+    $router->get('getUserData','User\UserController@getUserData');
 });
 
 $router->get('/', function () use ($router) {
