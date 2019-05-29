@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Course;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Models\Course;
 use App\Models\User;
-
+use App\Models\Course;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 class CourseController extends Controller{
     
@@ -34,11 +33,14 @@ class CourseController extends Controller{
 
     public function getUserCourse(){
         $user = User::findorfail(Auth::user()->id);
+        foreach($user->courses as $course);
 
-        return response()->json([
-            'status'  => 'success',
-            'body'    => $user->courses,
-        ],200);
+        if(empty($course)){
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Empty Course',
+            ],200);
+        }else return $user->courses;
     }
 
     public function updateUserCourse(Request $request, $id){
@@ -54,7 +56,7 @@ class CourseController extends Controller{
             return response()->json([
                 'status'  => 'error',
                 'message' => 'Failed Update Course',
-            ],424);
+            ],400);
         endif;
     }
 
@@ -70,7 +72,7 @@ class CourseController extends Controller{
             return response()->json([
                 'status'  => 'error',
                 'message' => 'Failed Delete Course',
-            ], 424);
+            ],400);
         endif;
 
     }

@@ -32,7 +32,8 @@ $router->group([
 $router->group([
     'prefix' => 'user',
 ], function () use ($router){
-    $router->get('getUserData','User\UserController@getUserData');
+    $router->get('getUserProfile','User\UserController@getUserProfile');
+    $router->put('updateUserProfile', 'User\UserController@updateUserProfile');
 });
 
 $router->get('/', function () use ($router) {
