@@ -18,4 +18,9 @@ class Course extends Model{
     {
         return $this->belongsTo('App/Models/User');
     }
+
+    public function Schedule()
+    {
+        return $this->hasMany('App/Models/Schedule');
+    }
 }

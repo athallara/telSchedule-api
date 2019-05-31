@@ -37,6 +37,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasMany('App\Models\Course');
     }
 
+    public function CourseSchedule()
+    {
+        return $this->hasManyThrough('App\Models\Schedule', 'App\Models\Course');
+    }
+
     /** Json Web Token **/
 
     /**

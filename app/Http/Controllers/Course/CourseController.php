@@ -32,15 +32,27 @@ class CourseController extends Controller{
     }
 
     public function getUserCourse(){
-        $user = User::findorfail(Auth::user()->id);
-        foreach($user->courses as $course);
 
+        $user = User::findorfail(Auth::user()->id);
+
+        //Bug : Still Reversed, First Collection should be Course not Schedule, Error in Eloquent
+        $schedule = $user->CourseSchedule()->with('course')->get();
+
+        // dd($user->CourseSchedule->where('course_id', 22)); //How To get Spesific Course List with Schedule, will be used later...
+
+        //How to Access Course & Schedule dat Collections
+        // foreach($schedules as $schedule){
+        //     echo $schedule->day;
+        //     echo $schedule->course->courseName;
+        // }
+        foreach($user->courses as $course);
+        
         if(empty($course)){
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Empty Course',
             ],200);
-        }else return $user->courses;
+        }else return $schedule;
     }
 
     public function updateUserCourse(Request $request, $id){
