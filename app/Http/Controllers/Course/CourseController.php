@@ -14,7 +14,7 @@ class CourseController extends Controller{
         $this->middleware('ValidateToken');
     }
 
-    public function createUserCourse(Request $request){
+    public function createCourse(Request $request){
         $course = new Course;
         $course->courseName     = $request->courseName;
         $course->courseCode     = $request->courseCode;
@@ -31,28 +31,31 @@ class CourseController extends Controller{
         ],200);
     }
 
-    public function getUserCourse(){
-
+    public function getCourse(){
         $user = User::findorfail(Auth::user()->id);
+        $courses = $user->Courses;
+        
+        return $this->responseGetCourse($user,$courses);
+    }
 
-        //Bug : Still Reversed, First Collection should be Course not Schedule, Error in Eloquent
-        $schedule = $user->CourseSchedule()->with('course')->get();
+    public function getCourseAndSchedule(){
+        // Access Schedule from Course
+        $user = User::findorfail(Auth::user()->id);
+        $courses = $user->Courses()->with('Schedule')->get();
+
+        return $this->responseGetCourse($user,$courses);
+
+        // // How to Access Schedule from Course, Should be implement in frontend;
+        // foreach($courses as $course){
+        //     echo $course->schedule;
+        //     foreach($course->schedule as $schedule){
+        //         echo "hari : " . $schedule->day;
+        //     }
+        // }
+        
 
         // dd($user->CourseSchedule->where('course_id', 22)); //How To get Spesific Course List with Schedule, will be used later...
 
-        //How to Access Course & Schedule dat Collections
-        // foreach($schedules as $schedule){
-        //     echo $schedule->day;
-        //     echo $schedule->course->courseName;
-        // }
-        foreach($user->courses as $course);
-        
-        if(empty($course)){
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Empty Course',
-            ],200);
-        }else return $schedule;
     }
 
     public function updateUserCourse(Request $request, $id){
@@ -86,6 +89,17 @@ class CourseController extends Controller{
                 'message' => 'Failed Delete Course',
             ],400);
         endif;
+    }
+
+    protected function responseGetCourse($user,$courses){
+        foreach($user->courses as $course);
+
+        if(empty($course)){
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Empty Course',
+            ],200);
+        }else return $courses;
 
     }
 }

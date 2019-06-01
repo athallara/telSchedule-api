@@ -19,8 +19,9 @@ $router->group([
 $router->group([
     'prefix' => 'course',
 ], function () use ($router){
-    $router->get('getUserCourse', 'Course\CourseController@getUserCourse');
-    $router->post('createUserCourse', 'Course\CourseController@createUserCourse');
+    $router->get('getCourse', 'Course\CourseController@getCourse');
+    $router->get('getCourseAndSchedule', 'Course\CourseController@getCourseAndSchedule');
+    $router->post('createCourse', 'Course\CourseController@createCourse');
     $router->put('updateUserCourse/{id}', 'Course\CourseController@updateUserCourse');
     $router->delete('deleteUserCourse/{id}', 'Course\CourseController@deleteUserCourse');
 });
@@ -39,3 +40,7 @@ $router->group([
 $router->get('/', function () use ($router) {
     return "Welcome to Tel-Schedule API";
 });
+
+$router->get('/test', 'Schedule\ScheduleController@getCourseFromSchedule');
+
+$router->get('/daynow', 'Schedule\ScheduleController@daynow');

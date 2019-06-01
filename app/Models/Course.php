@@ -16,11 +16,11 @@ class Course extends Model{
 
     public function User()
     {
-        return $this->belongsTo('App/Models/User');
+        return $this->belongsTo('App\Models\User');
     }
 
     public function Schedule()
     {
-        return $this->hasMany('App/Models/Schedule');
+        return $this->hasMany('App\Models\Schedule');
     }
 }
