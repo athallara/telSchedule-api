@@ -25,10 +25,7 @@ class CourseController extends Controller{
         $course->user_id        = Auth::user()->id;
         $course->save();
 
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Course Successfully Added',
-        ],200);
+        return $this->responseActionCourse($course, 'Create');
     }
 
     public function getCourse(){
@@ -45,49 +42,55 @@ class CourseController extends Controller{
 
         return $this->responseGetCourse($user,$courses);
 
-        // // How to Access Schedule from Course, Should be implement in frontend;
+        // How to Access Schedule from Course, Should be implement in frontend;
         // foreach($courses as $course){
         //     echo $course->schedule;
         //     foreach($course->schedule as $schedule){
         //         echo "hari : " . $schedule->day;
         //     }
         // }
+    }
+
+    public function getDetailCourse($courseId){     
         
+        $course = Course::findorfail($courseId)->where('user_id',Auth::user()->id);
+        $schedules = $course->where('id',$courseId)->with('Schedule')->first();
+        
+        return is_null($schedules) ? response()->json([
+            'status'  => 'error',
+            'message' => 'Course Not Found!',
+        ],404) : $schedules;
 
-        // dd($user->CourseSchedule->where('course_id', 22)); //How To get Spesific Course List with Schedule, will be used later...
+        // This will get Course Data from Schedule, bug : looping as much as schedule, Bad Practice.
+        // $schedules = $course->Schedule()->with('Course')->get();
 
+        // dd($user->CourseSchedule->where('course_id', 22)); //How To get (ONLY) Schedule from spesific Course, maybe will be used later...
     }
 
     public function updateUserCourse(Request $request, $id){
         $input = $request->all();
         $update = Course::where('id', $id)->where('user_id', Auth::user()->id)->update($input);
 
-        if($update):
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Successfully Update Course',
-            ],200);
-        else:
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Failed Update Course',
-            ],400);
-        endif;
+        return $this->responseActionCourse($update, 'Update');
     }
 
     public function deleteUserCourse(Request $request, $id){
         $course = Course::where('id', $id)->where('user_id', Auth::user()->id)->delete();
 
-        if($course):
+        return $this->responseActionCourse($course, 'Delete');
+    }
+
+    protected function responseActionCourse($action, $message){
+        if($action):
             return response()->json([
                 'status'  => 'success',
-                'message' => 'Successfully Delete Course',
+                'message' => 'Sucessfully ' . $message . ' Course',
             ],200);
         else:
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Failed Delete Course',
-            ],400);
+                'message' => 'Failed ' . $message . ' Course',
+            ], 400);
         endif;
     }
 

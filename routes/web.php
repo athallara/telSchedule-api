@@ -21,9 +21,20 @@ $router->group([
 ], function () use ($router){
     $router->get('getCourse', 'Course\CourseController@getCourse');
     $router->get('getCourseAndSchedule', 'Course\CourseController@getCourseAndSchedule');
+    $router->get('getDetailCourse/{courseId}', 'Course\CourseController@getDetailCourse');
     $router->post('createCourse', 'Course\CourseController@createCourse');
     $router->put('updateUserCourse/{id}', 'Course\CourseController@updateUserCourse');
     $router->delete('deleteUserCourse/{id}', 'Course\CourseController@deleteUserCourse');
+});
+
+/**
+ * @category Schedule Modules
+ */
+
+$router->group([
+    'prefix' => 'schedule',
+], function () use ($router){
+    $router->get('getDetailSchedule/{scheduleId}','Schedule\ScheduleController@getDetailSchedule');
 });
 
 /**
