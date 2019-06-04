@@ -7,6 +7,8 @@ use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CourseController extends Controller{
     
@@ -51,33 +53,37 @@ class CourseController extends Controller{
         // }
     }
 
-    public function getDetailCourse($courseId){     
+    public function getDetailCourse($courseId){
+
+        //Check If This User Have Course or Not
+        try{
+            $course = Course::findorfail($courseId)->where('user_id',Auth::user()->id);
+        }catch(ModelNotFoundException $e){
+            return $this->responseNotFound();
+        }
         
-        $course = Course::findorfail($courseId)->where('user_id',Auth::user()->id);
+        //Check If The Course Have Schedule or Not
         $schedules = $course->where('id',$courseId)->with('Schedule')->first();
-        
-        return is_null($schedules) ? response()->json([
-            'status'  => 'error',
-            'message' => 'Course Not Found!',
-        ],404) : $schedules;
+        return is_null($schedules) ? $this->responseNotFound() : $schedules;
 
-        // This will get Course Data from Schedule, bug : looping as much as schedule, Bad Practice.
-        // $schedules = $course->Schedule()->with('Course')->get();
-
-        // dd($user->CourseSchedule->where('course_id', 22)); //How To get (ONLY) Schedule from spesific Course, maybe will be used later...
     }
 
-    public function updateUserCourse(Request $request, $id){
-        $input = $request->all();
-        $update = Course::where('id', $id)->where('user_id', Auth::user()->id)->update($input);
-
+    public function updateCourse(Request $request, $courseId){
+        $update = Course::where('id', $courseId)->where('user_id', Auth::user()->id)->update($request->all());
         return $this->responseActionCourse($update, 'Update');
     }
 
-    public function deleteUserCourse(Request $request, $id){
-        $course = Course::where('id', $id)->where('user_id', Auth::user()->id)->delete();
-
+    public function deleteCourse($courseId){
+        $course = Course::where('id', $courseId)->where('user_id', Auth::user()->id)->delete();
         return $this->responseActionCourse($course, 'Delete');
+    }
+
+    protected function responseNotFound()
+    {
+        return response()->json([
+            'status'  => 'error',
+            'message' => 'Course Not Found',
+        ], 404);
     }
 
     protected function responseActionCourse($action, $message){
@@ -87,6 +93,7 @@ class CourseController extends Controller{
                 'message' => 'Sucessfully ' . $message . ' Course',
             ],200);
         else:
+            //I started thinking this condition useless, but idc :v
             return response()->json([
                 'status'  => 'error',
                 'message' => 'Failed ' . $message . ' Course',
