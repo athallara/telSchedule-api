@@ -15,7 +15,7 @@ class CreateSchedulesTable extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('day', 15);
+            $table->enum('day', ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'])->nullable();
             $table->time('startTime');
             $table->time('endTime');
             $table->enum('type', ['fixed', 'temporary'])->default('fixed');

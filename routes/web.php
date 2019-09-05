@@ -19,10 +19,10 @@ $router->group([
 $router->group([
     'prefix' => 'course',
 ], function () use ($router){
-    $router->get('getCourse', 'Course\CourseController@getCourse');
-    $router->get('getCourseAndSchedule', 'Course\CourseController@getCourseAndSchedule');
-    $router->get('getDetailCourse/{courseId}', 'Course\CourseController@getDetailCourse');
     $router->post('createCourse', 'Course\CourseController@createCourse');
+    $router->get('getCourse', 'Course\CourseController@getCourse');
+    $router->get('getDetailCourse/{courseId}', 'Course\CourseController@getDetailCourse');
+    $router->get('getCourseAndSchedule', 'Course\CourseController@getCourseAndSchedule');
     $router->put('updateCourse/{courseId}', 'Course\CourseController@updateCourse');
     $router->delete('deleteCourse/{courseId}', 'Course\CourseController@deleteCourse');
 });
@@ -34,8 +34,8 @@ $router->group([
 $router->group([
     'prefix' => 'schedule',
 ], function () use ($router){
-    $router->get('getDetailSchedule/{scheduleId}','Schedule\ScheduleController@getDetailSchedule');
     $router->post('{courseId}/createSchedule', 'Schedule\ScheduleController@createSchedule');
+    $router->get('getDetailSchedule/{scheduleId}','Schedule\ScheduleController@getDetailSchedule');
     $router->put('updateSchedule/{scheduleId}','Schedule\ScheduleController@updateSchedule');
     $router->delete('deleteSchedule/{scheduleId}', 'Schedule\ScheduleController@deleteSchedule');
 });
